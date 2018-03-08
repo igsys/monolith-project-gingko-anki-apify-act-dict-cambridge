@@ -64,32 +64,24 @@ Apify.main(async () => {
                 : 'unknown'
         const form = definfogc !== 'feminine' && definfogc !== 'masculine' ? definfogc : ''
 
-        // let result = {
-        // grammar: $(e1).find('div.di-head').find('span.di-info').find('span.pos').eq(0).text().trim(),
-        //     gender: definfogc === 'feminine'
-        //         ? 'feminine'
-        //         : definfogc === 'masculine'
-        //             ? 'masculine'
-        //             : 'none',
-        //     form: definfogc !== 'feminine' && definfogc !== 'masculine' ? definfogc : '',
-        //     examples: []
-        // }
-
         let examples = []
-        $('div.sense-block div.def-body').each((j, e2) => {
-            examples.push({
-                gender,
-                level: LEVEL_TYPE.NOVOICE,
-                // mono: ,
-                // tran:
+        let meaning = ''
+        $('div.sense-block').each((j, e2) => {
+            meaning = $(e2).find('span.trans').eq(0).text().trim()
+            $(e2).find('div.examp.emphasized').each((k, e3) => {
+                examples.push({
+                    gender,
+                    level: LEVEL_TYPE.NOVOICE,
+                    mono: $(e3).find('span.eg').text().trim(),
+                    tran: $(e3).find('div.trans').text().trim()
+                })
             })
-            console.log('e2', e2)
-        })
-
-        results.push({
-            grammar,
-            form,
-            examples
+            results.push({
+                grammar,
+                form,
+                meaning,
+                examples
+            })
         })
 
         // console.log('result', result)
