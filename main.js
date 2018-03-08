@@ -48,9 +48,8 @@ Apify.main(async () => {
 
     let meta = {
         ipa: $('div.di.entry-body__el').find('div.di-head').find('span.di-info').find('span.ipa').eq(0).text().trim(),
-        dict_def_simple: $('#entryContent').last('div.di.entry-body__el').find('span.trans').eq(0).text().trim(),
+        def_simple: $('#entryContent').last('div.di.entry-body__el').find('span.trans').eq(0).text().trim(),
     }
-    // console.log('meta', meta)
 
     // get meaning and examples
     $('div.di.entry-body__el').each((i, e1) => {
@@ -64,18 +63,23 @@ Apify.main(async () => {
                 : 'unknown'
         const form = definfogc !== 'feminine' && definfogc !== 'masculine' ? definfogc : ''
 
-        let examples = []
         let meaning = ''
+
+        // tranverse each definition
         $('div.sense-block').each((j, e2) => {
-            meaning = $(e2).find('span.trans').eq(0).text().trim()
-            $(e2).find('div.examp.emphasized').each((k, e3) => {
+            let examples = []
+            // get example phrases
+            $(e2).find('div.def-body div.examp.emphasized').each((k, e3) => {
                 examples.push({
                     gender,
                     level: LEVEL_TYPE.NOVOICE,
                     mono: $(e3).find('span.eg').text().trim(),
-                    tran: $(e3).find('div.trans').text().trim()
+                    tran: $(e3).find('span.trans').text().trim()
                 })
             })
+
+            // push each definition
+            meaning = $(e2).find('span.trans').eq(0).text().trim()
             results.push({
                 grammar,
                 form,
@@ -83,31 +87,8 @@ Apify.main(async () => {
                 examples
             })
         })
-
         // console.log('result', result)
     })
-    // $('.def-body').has('examp.emphasized').each((i, element1) => {
-    // $('.def-body').each((i, element1) => {
-    //     let result = {}
-    //     result['meaning'] = $(element1).find('.trans').eq(0).text().trim()
-    //     // result['grammar'] = $(element1).find('.tag_type').text().trim()
-    //     result.examples = []
-
-    //     // $(element1).find('.example_lines .example').each((j, element2) => {
-    //     //     console.log(j, $(element2).find('.tag_s').text().trim())
-
-    //     //     // only take first example
-    //     //     if (j == 0) {
-    //     //         result.examples.push({
-    //     //             level: LEVEL_TYPE.INTERMEDIATE,
-    //     //             mono: $(element2).find('.tag_s').text().trim(),
-    //     //             tran: $(element2).find('.tag_t').text().trim()
-    //     //         })
-    //     //     }
-    //     // })
-    //     // results.push(result)
-    //     console.log('result', result)
-    // })
 
     // Store the output
     const output = {
